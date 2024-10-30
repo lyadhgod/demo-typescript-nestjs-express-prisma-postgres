@@ -30,6 +30,10 @@ app.put('/todos/:id', (req, res) => {
     res.sendStatus(501)
 })
 
+app.patch('/todos/:id', (req, res) => {
+    res.sendStatus(501)
+})
+
 app.delete('/todos/:id', (req, res) => {
     res.sendStatus(501)
 })
