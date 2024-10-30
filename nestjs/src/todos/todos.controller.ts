@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  NotFoundException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { TodosService } from './todos.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
@@ -26,17 +28,38 @@ export class TodosController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.todosService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const todo = await this.todosService.findOne(+id);
+    if (todo == null) {
+      throw new NotFoundException();
+    }
+    return todo;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto) {
-    return this.todosService.update(+id, updateTodoDto);
+  async update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto) {
+    const todo = await this.todosService.update(+id, updateTodoDto);
+    if (todo == null) {
+      throw new NotFoundException();
+    }
+    return todo;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.todosService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const todo = await this.todosService.remove(+id);
+    if (todo == null) {
+      throw new NotFoundException();
+    }
+    return todo;
+  }
+
+  @Post('refresh')
+  async refresh() {
+    const todos = await this.todosService.refresh();
+    if (todos == null) {
+      throw new ServiceUnavailableException();
+    }
+    return todos;
   }
 }
