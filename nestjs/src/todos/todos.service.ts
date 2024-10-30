@@ -1,26 +1,82 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 
+const expressdomain = 'http://localhost:3000';
+const expresstodos = expressdomain + '/todos';
+
 @Injectable()
 export class TodosService {
-  create(createTodoDto: CreateTodoDto) {
-    return 'This action adds a new todo';
+  async create(createTodoDto: CreateTodoDto) {
+    let res;
+    try {
+      res = await fetch(expresstodos, {
+        method: 'POST',
+        body: JSON.stringify(createTodoDto),
+      });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err: any) {
+      throw new ServiceUnavailableException();
+    }
+
+    const data = res.ok ? res.json() : null;
+    return data;
   }
 
-  findAll() {
-    return `This action returns all todos`;
+  async findAll() {
+    let res;
+    try {
+      res = await fetch(expresstodos);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err: any) {
+      throw new ServiceUnavailableException();
+    }
+
+    const data = res.ok ? res.json() : null;
+    return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} todo`;
+  async findOne(id: number) {
+    let res;
+    try {
+      res = await fetch(`${expresstodos}/${id}`);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err: any) {
+      throw new ServiceUnavailableException();
+    }
+
+    const data = res.ok ? res.json() : null;
+    return data;
   }
 
-  update(id: number, updateTodoDto: UpdateTodoDto) {
-    return `This action updates a #${id} todo`;
+  async update(id: number, updateTodoDto: UpdateTodoDto) {
+    let res;
+    try {
+      res = await fetch(`${expresstodos}/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(updateTodoDto),
+      });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err: any) {
+      throw new ServiceUnavailableException();
+    }
+
+    const data = res.ok ? res.json() : null;
+    return data;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} todo`;
+  async remove(id: number) {
+    let res;
+    try {
+      res = await fetch(`${expresstodos}/${id}`, {
+        method: 'DELETE',
+      });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err: any) {
+      throw new ServiceUnavailableException();
+    }
+
+    const data = res.ok ? res.json() : null;
+    return data;
   }
 }
